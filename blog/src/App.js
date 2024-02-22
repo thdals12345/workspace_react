@@ -15,6 +15,10 @@ function App() {
   let [title, setTitle] = useState(['리액트 학습', '울산 맛집', '겨울 코트 추천']); 
   let [likeCnt, setLikeCnt] = useState([0, 0, 0]);
   let [isShow, setIsShow] = useState(false);
+  
+  //input 태그에 입력한 값을 저장하고 있는 state 변수
+  let [newTitle, setNewTitle] = useState('')
+
 
   return (
     <div className="App">
@@ -36,11 +40,33 @@ function App() {
         // map은 리턴 가능
         title.map((e, i) => {
           return(
-            <List setIsShow={setIsShow} key={i} title={e} likeCnt={likeCnt} idx={i} setLikeCnt={setLikeCnt}/>
+            <List setTitle={setTitle} setIsShow={setIsShow} key={i} title={title} likeCnt={likeCnt} idx={i} setLikeCnt={setLikeCnt}/>
             //<List title={title[i]}/>
           );
         })
       }
+
+      <div>
+        {/* e : 이벤트 정보 */}
+        <input type='text' onChange={(e) => {
+          // input 태그에 입력한 값을 출력
+          console.log(e.target.value)
+          //newTitle의 값을 바꾸기
+          setNewTitle(e.target.value)
+        }}/>
+        <input type='button' value={'저장'} onClick={(e) => {
+          //저장 버튼 클릭 -> 게시글 제목으로 글 등록
+          //생성되어있는 게시글 제목(title/배열)에 값 추가
+          //title.push() x
+          //title을 그대로 복사해서 copyTitle 배열 생성
+          //copyTitle에 새로운 제목
+          let copyTitle = [...title];
+          //unshift 가장 최근에 생성(글 추가 시 내림차순)
+          copyTitle.unshift(newTitle);
+          //타이틀 값을 변경
+          setTitle(copyTitle);
+        }}/>
+      </div>
 
       {
         isShow ? <Detail /> : ''
@@ -63,12 +89,21 @@ function List(props){
     <div className='list'>
       <h4> <span onClick={() => {
         props.setIsShow(true)
-      }}>{props.title}</span> <span onClick={() => {
+      }}>{props.title[props.idx]}</span> 
+      {/* <span onClick={() => {
         let copyLikeCnt = [...props.likeCnt];
         copyLikeCnt[props.idx]++;
         props.setLikeCnt(copyLikeCnt);
-      }}>👍</span> {props.likeCnt[props.idx]} </h4>
+      }}>👍</span> {props.likeCnt[props.idx]} */}
+      </h4>
       <p>2월 19일 작성</p>
+      <button type='button' onClick={(e) => {
+        //삭제 버튼 클릭 시 게시글 삭제
+        //title을 그대로 복사해서 copyTitle 배열 생성
+        let copyTitle = [...props.title];
+        copyTitle.splice(props.idx, 1);
+        props.setTitle(copyTitle);
+      }}>삭제</button>
   </div>
   );
 }
